@@ -24,11 +24,24 @@ Result’s variants
 
 A `match` expression is made up of ***arms***. An arm consists of a ***pattern*** to match against, and the code that should be run if the value given to match fits that arm’s pattern. Rust takes the value given to `match` and looks through each arm’s pattern in turn. Patterns and the `match` construct are powerful Rust features: they let you express a variety of situations your code might encounter and they make sure you handle them all. 
 
-*Shadowing* lets us **reuse variable name** rather than forcing us to create two unique variables. This feature is often used when you want to **convert a value from one type to another type**.
-
 The colon (\:) after variable tells Rust we’ll annotate the variable’s type. For example, `let x: u32 = 1;`.
 
 The `loop` keyword creates an infinite loop.
+
+Like immutable variables, ***constants*** are values that are bound to a name and are not allowed to change, but there are a few differences between constants and variables.
+1. Using `mut` with constants is not allowed.
+2. Constants aren’t just immutable by default—they’re always immutable.
+3. Constants are declared using the `const` keyword instead of the `let` keyword, and the type of the value *must* be annotated.
+4. Constants can be declared in any scope, including the global scope.
+5. Constants may be set only to a constant expression, not the result of a value that could only be computed at runtime.
+
+***Shadowing*** lets us **reuse variable name** rather than forcing us to create two unique variables (Rustaceans say that the first variable is shadowed by the second). In effect, the second variable overshadows the first, taking any uses of the variable name to itself until either **it itself is shadowed or the scope ends**. There are some differences between *shadowing* and marking a variable as `mut` when reassigning variable:
+|             | Shadowing(through `let`) | `mut` |
+| ----------- | :----------------------: | :---: |
+| chang type  |           true           | false |
+| chang value |           true           | true  |
+
+| Shadowing is often used when you want to **convert a value from one type to another type**.
 
 
 ### Cargo
