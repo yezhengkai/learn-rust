@@ -28,6 +28,7 @@ The colon (\:) after variable tells Rust we’ll annotate the variable’s type.
 
 The `loop` keyword creates an infinite loop.
 
+### Variables
 Like immutable variables, ***constants*** are values that are bound to a name and are not allowed to change, but there are a few differences between constants and variables.
 1. Using `mut` with constants is not allowed.
 2. Constants aren’t just immutable by default—they’re always immutable.
@@ -41,7 +42,54 @@ Like immutable variables, ***constants*** are values that are bound to a name an
 | chang type  |           true           | false |
 | chang value |           true           | true  |
 
-| Shadowing is often used when you want to **convert a value from one type to another type**.
+> Shadowing is often used when you want to **convert a value from one type to another type**.
+
+### Data Types
+Every value in Rust is of a certain ***data type***, which tells Rust what kind of data is being specified so it knows how to work with that data. There are two data type subsets: **scalar** and **compound**.
+> Rust is a ***statically typed*** language, which means that it must know the types of all variables at compile time.
+
+#### Scalar Types
+A *scalar* type represents a single value. Rust has four primary scalar types: integers, floating-point numbers, Booleans, and characters.
+##### Integer Types
+
+Table: Integer Types in Rust
+| Length  | Signed  | Unsigned |
+| ------- | ------- | -------- |
+| 8-bit   | `i8`    | `u8`     |
+| 16-bit  | `i16`   | `u16`    |
+| 32-bit  | `i32`   | `u32`    |
+| 64-bit  | `i64`   | `u64`    |
+| 128-bit | `i128`  | `u128`   |
+| arch    | `isize` | `usize`  |
+> ℹ️ Signed numbers are stored using [two's complement](https://en.wikipedia.org/wiki/Two%27s_complement) representation.
+
+Integer types default to `i32`. The primary situation in which you'd use `isize` or `usize` is when indexing some sort of collection.
+
+Range of integer:
+- Signed variant: $[-(2^{n - 1}), 2^{n - 1} - 1]$
+  - `i8`: $[-(2^7), 2^7 - 1]$
+- Unsigned variant: $[0, 2^n - 1]$
+  - `u8`: $[0, 2^{8} - 1]$
+
+The `isize` and `usize` types depend on the **architecture** of the computer your program is running on, which is denoted in the table as "arch": 64 bits if you're on a 64-bit architecture and 32 bits if you're on a 32-bit architecture.
+
+Number literals that can be multiple numeric types allow a type *suffix*, such as `57u8`, to designate the type. Number literals can also use `_` as a visual separator to make the number easier to read, such as `1_000`.
+
+Table: Integer Literals in Rust
+| Number literals | Example     |
+| --------------- | ----------- |
+| Decimal         | `98_222`      |
+| Hex             | `0xff`        |
+| Octal           | `0o77`        |
+| Binary          | `0b1111_0000` |
+| Byte(`u8` only) | `b'A'`        |
+
+##### Floating-Point Types
+Rust's floating-point types are `f32` and `f64`, which are 32 bits and 64 bits in size, respectively. 
+- The default type is `f64`.
+- All floating-point types are signed.
+
+##### The Boolean Type
 
 
 ### Cargo
