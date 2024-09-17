@@ -25,30 +25,30 @@ Using `!` means you are calling a macro rather than a normal function, and macro
 
 A `prelude` is a collection of names that are automatically brought into scope of every module in a crate. [Preludes](https://doc.rust-lang.org/reference/names/preludes.html)
 
-An *associated function* is a function that’s implemented on a type.
+An *associated function* is a function that's implemented on a type.
 
 The `&` indicates that this argument is a *reference*, which gives you a way to let multiple parts of your code access one piece of data without needing to copy that data into memory multiple times. Like variables, references are **immutable** by default.
 
 `Result` is an *enumeration*, often called an *enum*, which is a type that can be in one of multiple possible states. We call each possible state a ***variant***.
 
-Result’s variants
+Result's variants
 - `Ok`: Operation was successful, and inside `Ok` is the successfully generated value.
 - `Err`: Contains information about how or why the operation failed.
 
 **Crate** is a collection of Rust source code files. There are two types of crates
 - *Binary crate*, which is an executable.
-- *Library crate*, which contains code that is intended to be used in other programs and can’t be executed on its own.
+- *Library crate*, which contains code that is intended to be used in other programs and can't be executed on its own.
 
-A `match` expression is made up of ***arms***. An arm consists of a ***pattern*** to match against, and the code that should be run if the value given to match fits that arm’s pattern. Rust takes the value given to `match` and looks through each arm’s pattern in turn. Patterns and the `match` construct are powerful Rust features: they let you express a variety of situations your code might encounter and they make sure you handle them all. 
+A `match` expression is made up of ***arms***. An arm consists of a ***pattern*** to match against, and the code that should be run if the value given to match fits that arm's pattern. Rust takes the value given to `match` and looks through each arm's pattern in turn. Patterns and the `match` construct are powerful Rust features: they let you express a variety of situations your code might encounter and they make sure you handle them all. 
 
-The colon (\:) after variable tells Rust we’ll annotate the variable’s type. For example, `let x: u32 = 1;`.
+The colon (\:) after variable tells Rust we'll annotate the variable's type. For example, `let x: u32 = 1;`.
 
 The `loop` keyword creates an infinite loop.
 
 ## Ch 3.1 Variables
 Like immutable variables, ***constants*** are values that are bound to a name and are not allowed to change, but there are a few differences between constants and variables.
 1. Using `mut` with constants is not allowed.
-2. Constants aren’t just immutable by default—they’re always immutable.
+2. Constants aren't just immutable by default—they're always immutable.
 3. Constants are declared using the `const` keyword instead of the `let` keyword, and the type of the value *must* be annotated.
 4. Constants can be declared in any scope, including the global scope.
 5. Constants may be set only to a constant expression, not the result of a value that could only be computed at runtime.
@@ -156,7 +156,7 @@ Rust's floating-point types are `f32` and `f64`, which are 32 bits and 64 bits i
 ### Parameters
 - *Parameters* are special variables that are part of a function's signature
 - We can provide concrete values for parameters. Technically, the concrete values are called *arguments*
-  >  In casual conversation, people tend to use the words parameter and argument interchangeably for either the variables in a function’s definition or the concrete values passed in when you call a function.
+  >  In casual conversation, people tend to use the words parameter and argument interchangeably for either the variables in a function's definition or the concrete values passed in when you call a function.
 - *Must* declare the type of each parameter
 
 ### Statements and Expressions
@@ -172,7 +172,7 @@ Rust's floating-point types are `f32` and `f64`, which are 32 bits and 64 bits i
     ``` rust
     let y = {
         let x = 3;
-        x + 1 // doesn’t have a semicolon at the end
+        x + 1 // doesn't have a semicolon at the end
     };
     /* This expression:
     {
@@ -202,7 +202,34 @@ Rust's floating-point types are `f32` and `f64`, which are 32 bits and 64 bits i
 
 ## Ch 3.5 Control Flow
 ### `if` Expressions
-
+```rust
+if condition {
+  ...
+}
+```
+```rust
+if condition {
+  ...
+} else {
+  ...
+}
+```
+```rust
+if condition {
+  ...
+} else if {
+  ...
+} else if {
+  ...
+} else {
+  ...
+}
+```
+- Blocks of code associated with the conditions in `if` expressions are sometimes called *arms*, just like the arms in `match` expressions
+- condition *must* be a `bool`
+- Rust will **not automatically try to convert non-Boolean types to a Boolean**. You must be **explicit** and always provide `if` with a Boolean as its condition
+- Rust only executes the block for the first `true` condition, and once it finds one, it doesn't even check the rest
+- If you use too many `else if` expressions, consider refactoring (maybe using `match`)
 
 ## Cargo
 `cargo doc --open` command will build documentation provided by all your dependencies locally and open it in your browser.
