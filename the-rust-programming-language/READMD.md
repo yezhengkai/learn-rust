@@ -14,6 +14,8 @@
     - [Parameters](#parameters)
     - [Statements and Expressions](#statements-and-expressions)
     - [Functions with Return Values](#functions-with-return-values)
+  - [Ch 3.4 Comments](#ch-34-comments)
+  - [Ch 3.5](#ch-35)
   - [Cargo](#cargo)
 
 The `main` function is special: it is always the first code that runs in every executable Rust program.
@@ -185,6 +187,20 @@ Rust's floating-point types are `f32` and `f64`, which are 32 bits and 64 bits i
 - The return value:
   - the value of the final expression in the block of the body of a function
   - *return early* from a function by using the `return` keyword and specifying a value, **but most functions return the last expression implicitly.**
+
+## Ch 3.4 Comments
+[Appendix B: Operators and Symbols](https://doc.rust-lang.org/book/appendix-02-operators.html) Table B-7
+| Symbol  |  Explanation |
+|---|---|
+| `//`  | Line comment  |
+| `//!`  | Inner line doc comment  |
+| `///`  | Outer line doc comment  |
+| `/*...*/`  | Block comment  |
+| `/*!...*/`  | Inner block doc comment  |
+| `/**...*/`  | Outer block doc comment  |
+
+## Ch 3.5
+
 
 ## Cargo
 `cargo doc --open` command will build documentation provided by all your dependencies locally and open it in your browser.
