@@ -1,7 +1,9 @@
 {
     "rust-analyzer.linkedProjects": [
+        // The Rust Programming Language
         "${workspaceFolder}/the-rust-programming-language/ch1.3-hello-cargo/Cargo.toml",
         "${workspaceFolder}/the-rust-programming-language/ch2-guessing-game/Cargo.toml",
         "${workspaceFolder}/the-rust-programming-language/ch3.1-variables/Cargo.toml",
+        "${workspaceFolder}/the-rust-programming-language/ch3.2-data-types/Cargo.toml",
     ]
 }
