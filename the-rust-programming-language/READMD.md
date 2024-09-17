@@ -15,7 +15,8 @@
     - [Statements and Expressions](#statements-and-expressions)
     - [Functions with Return Values](#functions-with-return-values)
   - [Ch 3.4 Comments](#ch-34-comments)
-  - [Ch 3.5](#ch-35)
+  - [Ch 3.5 Control Flow](#ch-35-control-flow)
+    - [`if` Expressions](#if-expressions)
   - [Cargo](#cargo)
 
 The `main` function is special: it is always the first code that runs in every executable Rust program.
@@ -199,7 +200,8 @@ Rust's floating-point types are `f32` and `f64`, which are 32 bits and 64 bits i
 | `/*!...*/`  | Inner block doc comment  |
 | `/**...*/`  | Outer block doc comment  |
 
-## Ch 3.5
+## Ch 3.5 Control Flow
+### `if` Expressions
 
 
 ## Cargo
