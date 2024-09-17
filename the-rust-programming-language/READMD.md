@@ -11,6 +11,9 @@
       - [The Tuple Type](#the-tuple-type)
       - [The Array Type](#the-array-type)
   - [Ch 3.3 Functions](#ch-33-functions)
+    - [Parameters](#parameters)
+    - [Statements and Expressions](#statements-and-expressions)
+    - [Functions with Return Values](#functions-with-return-values)
   - [Cargo](#cargo)
 
 The `main` function is special: it is always the first code that runs in every executable Rust program.
@@ -138,10 +141,50 @@ Rust's floating-point types are `f32` and `f64`, which are 32 bits and 64 bits i
 - Access elements of an array using indexing, like this: `let first_elem = array[0];`
 
 ## Ch 3.3 Functions
-- Keyword `fn`
+- Define function: 
+  ```rust
+  fn fn_name(param_1: param_1_type, ...) -> return_type {
+      ...
+  }
+  ```
 - `main` function is the entry point of many programs
 -  Function naming convention: `snake_case`
--  
+
+### Parameters
+- *Parameters* are special variables that are part of a function's signature
+- We can provide concrete values for parameters. Technically, the concrete values are called *arguments*
+  >  In casual conversation, people tend to use the words parameter and argument interchangeably for either the variables in a function’s definition or the concrete values passed in when you call a function.
+- *Must* declare the type of each parameter
+
+### Statements and Expressions
+- Rust is an **expression-based language**
+- **Statements** are instructions that perform some action and **do not return a value**.
+  - `let y = 6;`
+  - Function definitions
+- **Expressions** evaluate to a resultant value.
+  - Expressions can be part of statements: the `6` in the statement `let y = 6;`
+  - Calling a function
+  - Calling a macro
+  - A new scope block created with curly brackets
+    ``` rust
+    let y = {
+        let x = 3;
+        x + 1 // doesn’t have a semicolon at the end
+    };
+    /* This expression:
+    {
+        let x = 3;
+        x + 1
+    }
+    */
+    ```
+  - **Expressions do not include ending semicolons.** If you add a semicolon to the end of an expression, you turn it into a statement, and it will then not return a value. 
+
+### Functions with Return Values
+- We don't name return values, but we must **declare their type** after an arrow (`->`)
+- The return value:
+  - the value of the final expression in the block of the body of a function
+  - *return early* from a function by using the `return` keyword and specifying a value, **but most functions return the last expression implicitly.**
 
 ## Cargo
 `cargo doc --open` command will build documentation provided by all your dependencies locally and open it in your browser.
