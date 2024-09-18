@@ -17,6 +17,10 @@
   - [Ch 3.4 Comments](#ch-34-comments)
   - [Ch 3.5 Control Flow](#ch-35-control-flow)
     - [`if` Expressions](#if-expressions)
+    - [Repetition with Loops](#repetition-with-loops)
+      - [Repeating Code with `loop`](#repeating-code-with-loop)
+      - [Returning Values from Loops](#returning-values-from-loops)
+      - [Loop Labels to Disambiguate Between Multiple Loops](#loop-labels-to-disambiguate-between-multiple-loops)
   - [Cargo](#cargo)
 
 The `main` function is special: it is always the first code that runs in every executable Rust program.
@@ -230,6 +234,32 @@ if condition {
 - Rust will **not automatically try to convert non-Boolean types to a Boolean**. You must be **explicit** and always provide `if` with a Boolean as its condition
 - Rust only executes the block for the first `true` condition, and once it finds one, it doesn't even check the rest
 - If you use too many `else if` expressions, consider refactoring (maybe using `match`)
+- Because `if` is an *expression*, we can use it on the right side of a `let` statement to assign the outcome to a variable
+  - If the value types of the `if` and `else` arms are incompatible, a compilation error will occur.
+
+### Repetition with Loops
+#### Repeating Code with `loop`
+- The loop keyword tells Rust to execute a block of code over and over again forever or until you explicitly tell it to stop
+- Use `ctrl-c` to interrupt a program
+- The `break` keyword in a loop tells the program when to stop executing the loop
+- The `continue` keyword in a loop tells the program to skip over any remaining code in this iteration of the loop and go to the next iteration
+
+#### Returning Values from Loops
+To return a value from a `loop`, you can add the value to be returned after the `break` expression that stops the loop
+```rust
+let result = loop {
+  ...
+  break value;
+};
+```
+
+#### Loop Labels to Disambiguate Between Multiple Loops
+If you have loops within loops, `break` and `continue` apply to the innermost loop at that point. You can optionally specify a *loop label* on a loop that you can then use with `break` or `continue` to specify that those keywords apply to the labeled loop instead of the innermost loop.
+Loop labels must begin with a single quote
+```rust
+'a: loop {...}
+```
+
 
 ## Cargo
 Use `cargo build` to compile a local package and all of its dependencies.
