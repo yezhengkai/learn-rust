@@ -232,4 +232,11 @@ if condition {
 - If you use too many `else if` expressions, consider refactoring (maybe using `match`)
 
 ## Cargo
+Use `cargo build` to compile a local package and all of its dependencies.
+When your project is finally ready for **release**, you can use `cargo build --release` to compile it with **optimizations**. This command will create an executable in `target/release` instead of `target/debug`.
+
+Use `cargo run` to compile the code and then run the resultant executable all in one command
+
+Use `cargo check` to quickly check your code to make sure it compiles but doesn’t produce an executable. (Check a local package and all of its dependencies for errors)
+
 `cargo doc --open` command will build documentation provided by all your dependencies locally and open it in your browser.
