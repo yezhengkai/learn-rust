@@ -21,6 +21,8 @@
       - [Repeating Code with `loop`](#repeating-code-with-loop)
       - [Returning Values from Loops](#returning-values-from-loops)
       - [Loop Labels to Disambiguate Between Multiple Loops](#loop-labels-to-disambiguate-between-multiple-loops)
+      - [Conditional Loops with `while`](#conditional-loops-with-while)
+      - [Looping Through a Collection with `for`](#looping-through-a-collection-with-for)
   - [Cargo](#cargo)
 
 The `main` function is special: it is always the first code that runs in every executable Rust program.
@@ -260,6 +262,29 @@ Loop labels must begin with a single quote
 'a: loop {...}
 ```
 
+#### Conditional Loops with `while`
+```rust
+while condition {
+  ...
+}
+```
+ While the condition is `true`, the loop runs. When the condition ceases to be `true`, the program calls `break`, stopping the loop.
+
+#### Looping Through a Collection with `for`
+```rust
+for element in collection {
+  ...
+}
+```
+- Using the `Range` provided by the standard library, it sequentially produces all numbers starting with one number and ending before the other.
+  ```rust
+  for number in (1..4).rev() {
+      println!("{number}!");
+  }
+  // 3!
+  // 2!
+  // 1!
+  ```
 
 ## Cargo
 Use `cargo build` to compile a local package and all of its dependencies.
