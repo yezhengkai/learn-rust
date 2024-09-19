@@ -23,6 +23,7 @@
       - [Loop Labels to Disambiguate Between Multiple Loops](#loop-labels-to-disambiguate-between-multiple-loops)
       - [Conditional Loops with `while`](#conditional-loops-with-while)
       - [Looping Through a Collection with `for`](#looping-through-a-collection-with-for)
+  - [Ch 4.1 What is Ownership?](#ch-41-what-is-ownership)
   - [Cargo](#cargo)
 
 The `main` function is special: it is always the first code that runs in every executable Rust program.
@@ -285,6 +286,17 @@ for element in collection {
   // 2!
   // 1!
   ```
+
+## Ch 4.1 What is Ownership?
+ℹ️ *Ownership* is a set of rules that govern how a Rust program manages memory.
+All programs have to manage the way they use a computer’s memory while running.
+1. Garbage Collection
+2. Manually allocate and free
+3. Ownership
+
+the main purpose of ownership is to manage heap data can help explain why it works the way it does.
+
+
 
 ## Cargo
 Use `cargo build` to compile a local package and all of its dependencies.
