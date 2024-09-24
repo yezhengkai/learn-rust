@@ -24,6 +24,10 @@
       - [Conditional Loops with `while`](#conditional-loops-with-while)
       - [Looping Through a Collection with `for`](#looping-through-a-collection-with-for)
   - [Ch 4.1 What is Ownership?](#ch-41-what-is-ownership)
+    - [Ownership Rules](#ownership-rules)
+    - [Variable Scope](#variable-scope)
+    - [The String Type](#the-string-type)
+    - [Memory and Allocation](#memory-and-allocation)
   - [Cargo](#cargo)
 
 The `main` function is special: it is always the first code that runs in every executable Rust program.
@@ -288,13 +292,82 @@ for element in collection {
   ```
 
 ## Ch 4.1 What is Ownership?
-ℹ️ *Ownership* is a set of rules that govern how a Rust program manages memory.
-All programs have to manage the way they use a computer’s memory while running.
-1. Garbage Collection
-2. Manually allocate and free
-3. Ownership
+💡 *Ownership* is a set of rules that govern how a Rust program manages memory.
 
-the main purpose of ownership is to manage heap data can help explain why it works the way it does.
+All programs have to manage the way they use a computer's memory while running.
+1. [Garbage collection (GC)](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science))
+   - A form of **automatic memory management**. The *garbage collector* attempts to reclaim memory that was allocated by the program, but is no longer referenced; such memory is called *garbage*.
+   -  Garbage collection may take a significant proportion of a program's total processing time, and **affect performance** as a result.
+   - **Resources other than memory**, such as network sockets, database handles, windows, file descriptors, and device descriptors, **are not typically handled by garbage collection, but rather by other methods (e.g. [destructors](https://en.wikipedia.org/wiki/Destructor_(computer_programming))).** Some such methods de-allocate memory also.
+2. [Manual memory management](https://en.wikipedia.org/wiki/Manual_memory_management)
+3. Ownership
+   - Memory is managed through **a system of ownership with a set of rules that the *compiler* checks**.
+   - If any of the rules are violated, the program won't compile.
+   - Any features of ownership will not slow down the program while it's running.
+
+Ownership addresses problems like tracking which parts of code use data on the heap, minimizing duplicate data on the heap, and cleaning up unused data on the heap to prevent running out of space.
+
+> ℹ️ The Stack and the Heap
+> 
+> **Stack:**
+> - Last In, First Out (LIFO)
+> - Adding data is called *pushing onto the stack*
+> - Removing data is called *popping off the stack*
+> - All data stored on the stack must have a known, fixed size
+> - When a function is called, passed arguments and local variables are pushed onto the stack and popped when the function ends.
+> 
+> **Heap:**
+> - Less organized: when you put data on the heap, you request a certain amount of space.
+> - *Allocating on the heap* (Abbreviated as *Allocating*): The memory allocator finds an empty spot in the heap that is big enough, marks it as being in use, and returns a **pointer**, which is the address of that location.
+>    - Pointer (known, fixed size) can be stored on the stack
+>    - To get actual data, we must follow the pointer
+> - Data whose size is unknown at compile time or whose size may change must be stored on the heap
+>
+> Comparison:
+> - Pushing to the stack is faster than allocating on the heap
+> - Accessing data in the heap is slower than accessing data on the stack because you have to follow a pointer to get there
+> - Both the stack and the heap are parts of memory available to your code to use at **runtime**.
+
+### Ownership Rules
+- Each value in Rust has an owner.
+- There can only be one owner at a time.
+- When the owner goes out of **scope**, the value will be dropped.
+
+### Variable Scope
+A **scope** is the range within a program for which an item is valid.
+
+The variable is valid from the point at which it's declared until the end of the current scope.
+```rust
+{                      // s is not valid here, it’s not yet declared
+    // s refers to a string literal, where the value of the string is hardcoded into the text of our program.
+    let s = "hello";   // s is valid from this point forward
+    // do stuff with s
+}                      // this scope is now over, and s is no longer valid
+```
+- When `s` comes into scope, it is valid.
+- It remains valid until it goes out of scope.
+
+### The String Type
+*String literals*, where a string value is hardcoded into program. They aren’t suitable for every situation. Because
+- immutable
+- not every string value can be known when we write our code
+
+For situations where string literals are not suitable, Rust has a second string type, `String`. This type **manages data allocated on the heap** and as such is able to store an amount of text that is unknown to us at compile time.
+
+Create a `String` from a string literal using the from function, like so:
+```rust
+let s = String::from("hello");
+```
+This kind of string can be mutated:
+```rust
+let mut s = String::from("hello");
+
+s.push_str(", world!"); // push_str() appends a literal to a String
+
+println!("{s}"); // This will print `hello, world!`
+```
+
+### Memory and Allocation
 
 
 
@@ -304,6 +377,6 @@ When your project is finally ready for **release**, you can use `cargo build --r
 
 Use `cargo run` to compile the code and then run the resultant executable all in one command
 
-Use `cargo check` to quickly check your code to make sure it compiles but doesn’t produce an executable. (Check a local package and all of its dependencies for errors)
+Use `cargo check` to quickly check your code to make sure it compiles but doesn't produce an executable. (Check a local package and all of its dependencies for errors)
 
 `cargo doc --open` command will build documentation provided by all your dependencies locally and open it in your browser.
