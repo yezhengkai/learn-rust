@@ -33,6 +33,10 @@
     - [Stack-Only Data: Copy](#stack-only-data-copy)
     - [Ownership and Functions](#ownership-and-functions)
     - [Return Values and Scope](#return-values-and-scope)
+  - [Ch 4.2 References and Borrowing](#ch-42-references-and-borrowing)
+    - [Mutable References](#mutable-references)
+    - [Dangling References](#dangling-references)
+    - [The Rules of References](#the-rules-of-references)
   - [Cargo](#cargo)
 
 The `main` function is special: it is always the first code that runs in every executable Rust program.
@@ -523,6 +527,121 @@ The ownership of a variable follows the same pattern every time: assigning a val
 
 ❓ What if we want to let a function use a value but not take ownership?
 ✅ Rust has a feature for using a value without transferring ownership, called *references*.
+
+## Ch 4.2 References and Borrowing
+A *reference* is like a pointer in that it's an address we can follow to access the data stored at that address; that data is owned by some other variable. Unlike a pointer, a reference is guaranteed to point to a valid value of a particular type for the life of that reference.
+```rust
+fn main() {
+    let s1 = String::from("hello");
+
+    let len = calculate_length(&s1); // &s1 syntax lets us create a reference that refers to the value of s1 but does not own it
+
+    println!("The length of '{s1}' is {len}.");
+}
+
+fn calculate_length(s: &String) -> usize { // s is a reference to a String
+    s.len()
+} // Here, s goes out of scope. But because it does not have ownership of what
+  // it refers to, it is not dropped.
+```
+Note that we pass `&s1` into `calculate_length` and, in its definition, we take `&String` rather than `String`. These **ampersands represent references**, and they allow you to **refer to some value without taking ownership of it**. We call the action of creating a reference *borrowing*.
+
+Just as variables are immutable by default, so are references. We're not allowed to modify something we have a reference to.
+
+![ A diagram of &String s pointing at String s1](https://doc.rust-lang.org/book/img/trpl04-05.svg)
+
+> 💡 Note: The opposite of referencing by using `&` is `dereferencing`, which is accomplished with the dereference operator, `*`. We'll see some uses of the dereference operator in Chapter 8 and discuss details of dereferencing in Chapter 15.
+
+### Mutable References
+```rust
+fn main() {
+    let mut s = String::from("hello"); // change s to be mut
+
+    change(&mut s); // create a mutable reference with &mut s
+}
+
+fn change(some_string: &mut String) { // accept a mutable reference
+    some_string.push_str(", world");
+}
+```
+
+Mutable references have one big restriction: **if you have a mutable reference to a value, you can have no other references to that value**.
+
+The restriction preventing multiple mutable references to the same data at the same time allows for mutation but in a very controlled fashion. The benefit of having this restriction is that **Rust can prevent data races at compile time**. A *data race* is similar to a race condition and happens when these three behaviors occur:
+- Two or more pointers access the same data at the same time.
+- At least one of the pointers is being used to write to the data.
+- There's no mechanism being used to synchronize access to the data.
+
+As always, we can use curly brackets to create a new scope, allowing for multiple mutable references, just not *simultaneous* ones:
+```rust
+let mut s = String::from("hello");
+
+{
+    let r1 = &mut s;
+} // r1 goes out of scope here, so we can make a new reference with no problems.
+
+let r2 = &mut s;
+```
+
+Rust enforces a similar rule for combining mutable and immutable references.
+```rust
+let mut s = String::from("hello");
+
+let r1 = &s; // no problem
+let r2 = &s; // no problem
+let r3 = &mut s; // BIG PROBLEM
+
+println!("{}, {}, and {}", r1, r2, r3);
+```
+We also **cannot have a mutable reference while we have an immutable one to the same value.**
+
+**Users of an immutable reference don't expect the value to suddenly change out from under them!** However, **multiple immutable references are allowed** because no one who is just reading the data has the ability to affect anyone else's reading of the data.
+
+Note that a reference's scope starts from where it is introduced and continues through the last time that reference is used. The scopes of the immutable references `r1` and `r2` end after the `println!` where they are last used, which is before the mutable reference `r3` is created.
+```rust
+let mut s = String::from("hello");
+
+let r1 = &s; // no problem
+let r2 = &s; // no problem
+println!("{r1} and {r2}");
+// variables r1 and r2 will not be used after this point
+
+let r3 = &mut s; // no problem
+println!("{r3}");
+```
+
+### Dangling References
+> 💡 [Dangling pointer](https://en.wikipedia.org/wiki/Dangling_pointer)
+> **Dangling pointers** and **wild pointers** in computer programming are pointers that do not point to a valid object of the appropriate type. These are special cases of memory safety violations. More generally, **dangling references** and **wild references** are references that do not resolve to a valid destination.
+
+In Rust the compiler guarantees that **references will never be dangling references**: if you have a reference to some data, the compiler will ensure that the data will not go out of scope before the reference to the data does.
+```rust
+fn main() {
+    let reference_to_nothing = dangle();
+}
+
+fn dangle() -> &String {  // dangle returns a reference to a String
+    let s = String::from("hello");  // s is a new String
+
+    &s// we return a reference to the String, s
+} // Here, s goes out of scope, and is dropped. Its memory goes away.
+  // Danger!
+```
+Because `s` is created inside dangle, **when the code of `dangle` is finished, `s` will be deallocated**. But we tried to return a reference to it. That means this reference would be pointing to an invalid `String`. That's no good! Rust won't let us do this.
+
+The solution here is to return the String directly:
+```rust
+fn no_dangle() -> String {
+    let s = String::from("hello");
+
+    s
+}
+```
+This works without any problems. Ownership is moved out, and nothing is deallocated.
+
+### The Rules of References
+- At any given time, you can have *either* one mutable reference *or* any number of immutable references.
+- References must always be valid.
 
 ## Cargo
 Use `cargo build` to compile a local package and all of its dependencies.

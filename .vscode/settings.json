@@ -8,5 +8,6 @@
         "${workspaceFolder}/the-rust-programming-language/ch3.3-functions/Cargo.toml",
         "${workspaceFolder}/the-rust-programming-language/ch3.5-control-flow/Cargo.toml",
         "${workspaceFolder}/the-rust-programming-language/ch4.1-ownership/Cargo.toml",
+        "${workspaceFolder}/the-rust-programming-language/ch4.2-references/Cargo.toml",
     ]
 }
