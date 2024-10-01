@@ -37,6 +37,11 @@
     - [Mutable References](#mutable-references)
     - [Dangling References](#dangling-references)
     - [The Rules of References](#the-rules-of-references)
+  - [Ch 4.3 The Slice Type](#ch-43-the-slice-type)
+    - [String Slices](#string-slices)
+    - [String Literals as Slices](#string-literals-as-slices)
+    - [String Slices as Parameters](#string-slices-as-parameters)
+    - [Other Slices](#other-slices)
   - [Cargo](#cargo)
 
 The `main` function is special: it is always the first code that runs in every executable Rust program.
@@ -642,6 +647,63 @@ This works without any problems. Ownership is moved out, and nothing is dealloca
 ### The Rules of References
 - At any given time, you can have *either* one mutable reference *or* any number of immutable references.
 - References must always be valid.
+
+## Ch 4.3 The Slice Type
+*Slices* let you reference a **contiguous sequence of elements** in a collection rather than the whole collection.
+**A slice is a kind of reference, so it does not have ownership.**
+
+### String Slices
+A string slice is a reference to part of a String, and it looks like this:
+```rust
+let s = String::from("hello world");
+
+let hello = &s[0..5];
+let world = &s[6..11];
+```
+
+We create slices using a range within brackets by specifying `[starting_index..ending_index]`, where `starting_index` is the first position in the slice and `ending_index` is one more than the last position in the slice. Internally, the slice data structure stores the **starting position** and the **length** of the slice, which corresponds to `ending_index` minus `starting_index`.
+![String slice referring to part of a String](https://doc.rust-lang.org/book/img/trpl04-06.svg)
+
+Some `..` range syntax:
+```rust
+let s = String::from("hello");
+let len = s.len();
+
+let slice = &s[0..2];
+let slice = &s[..2];
+
+let slice = &s[3..len];
+let slice = &s[3..];
+
+let slice = &s[0..len];
+let slice = &s[..];
+```
+
+> 💡 Note: String slice range indices must occur at valid UTF-8 character boundaries. If you attempt to create a string slice in the middle of a multibyte character, your program will exit with an error. For the purposes of introducing string slices, we are assuming ASCII only in this section; a more thorough discussion of UTF-8 handling is in the "Storing UTF-8 Encoded Text with Strings" section of Chapter 8.
+
+### String Literals as Slices
+```rust
+let s:&str = "Hello, world!";
+```
+The type of `s` here is `&str`: it's a slice pointing to that specific point of the binary. This is also why string literals are immutable; `&str` is an **immutable reference**.
+
+### String Slices as Parameters
+```rust
+fn first_word(s: &String) -> &str {
+```
+Improving the `first_word` function by using a string slice for the type of the `s` parameter
+```rust
+fn first_word(s: &str) -> &str {
+```
+If we have a string slice, we can pass that directly. If we have a `String`, we can pass a slice of the `String` or a reference to the `String`. This flexibility takes advantage of deref coercions, a feature we will cover in the "Implicit Deref Coercions with Functions and Methods" section of Chapter 15.
+
+### Other Slices
+Consider array:
+```rust
+let a = [1, 2, 3, 4, 5];
+let slice: &[i32] = &a[1..3];
+assert_eq!(slice, &[2, 3]);
+```
 
 ## Cargo
 Use `cargo build` to compile a local package and all of its dependencies.
