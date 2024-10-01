@@ -10,5 +10,6 @@
         "${workspaceFolder}/the-rust-programming-language/ch4.1-ownership/Cargo.toml",
         "${workspaceFolder}/the-rust-programming-language/ch4.2-references/Cargo.toml",
         "${workspaceFolder}/the-rust-programming-language/ch4.3-slice/Cargo.toml",
+        "${workspaceFolder}/the-rust-programming-language/ch5.1-structs/Cargo.toml",
     ]
 }
