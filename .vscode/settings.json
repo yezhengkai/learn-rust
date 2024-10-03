@@ -12,5 +12,6 @@
         "${workspaceFolder}/the-rust-programming-language/ch4.3-slice/Cargo.toml",
         "${workspaceFolder}/the-rust-programming-language/ch5.1-structs/Cargo.toml",
         "${workspaceFolder}/the-rust-programming-language/ch5.2-structs-example-program/Cargo.toml",
+        "${workspaceFolder}/the-rust-programming-language/ch5.3-methods/Cargo.toml",
     ]
 }

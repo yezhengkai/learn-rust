@@ -47,6 +47,9 @@
     - [Creating Instances from Other Instances with Struct Update Syntax](#creating-instances-from-other-instances-with-struct-update-syntax)
     - [Using Tuple Structs Without Named Fields to Create Different Types](#using-tuple-structs-without-named-fields-to-create-different-types)
     - [Unit-Like Structs Without Any Fields](#unit-like-structs-without-any-fields)
+  - [Ch 5.3 Method Syntax](#ch-53-method-syntax)
+    - [Defining Methods](#defining-methods)
+    - [Associated Functions](#associated-functions)
   - [Cargo](#cargo)
 
 The `main` function is special: it is always the first code that runs in every executable Rust program.
@@ -843,6 +846,87 @@ fn main() {
 > }
 > ```
 > **The compiler will complain that it needs lifetime specifiers**
+
+## Ch 5.3 Method Syntax
+*Methods* vs Functions
+- similar
+  - declare them with the `fn` keyword and a name
+  - they can have parameters and a return value
+  - they contain some code that's run when the method is called from somewhere else
+- different
+  - methods are defined within the context of a *struct* (or an *enum* or a *trait object*)
+  - The first parameter of a method is always `self`, which represents the instance of the struct the method is being called on
+
+### Defining Methods
+```rust
+#[derive(Debug)]
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+impl Rectangle {
+    fn area(&self) -> u32 {
+        self.width * self.height
+    }
+}
+
+fn main() {
+    let rect1 = Rectangle {
+        width: 30,
+        height: 50,
+    };
+
+    println!(
+        "The area of the rectangle is {} square pixels.",
+        rect1.area()
+    );
+}
+```
+To define the function within the context of `Rectangle`, we start an `impl` (implementation) block for `Rectangle`. Everything within this `impl` block will be associated with the `Rectangle` type.
+Use *method syntax* to call the `area` method on our `Rectangle` instance. The method syntax goes after an instance: we add a dot followed by the method name, parentheses, and any arguments.
+
+The `&self` is actually short for `self: &Self`. Within an `impl` block, the type `Self` is an alias for the type that the `impl` block is for, in this case `Self` is an alias of `Rectangle`.
+Methods must have a parameter named `self` of type `Self` for their *first parameter*, so Rust lets you **abbreviate this with only the name `self` in the first parameter spot**.
+
+Methods can take ownership of `self` (`self`), borrow `self` immutably (`&self`), as we've done here, or borrow `self` mutably (`&mut self`), just as they can any other parameter.
+ℹ️ Having a method that takes ownership of the instance by using just `self` as the first parameter is *rare*; this technique is usually used when the method transforms `self` into something else and you want to **prevent the caller from using the original instance after the transformation**.
+
+**The main reason for using methods instead of functions**, in addition to providing **method syntax** and **not having to repeat the type** of `self` in every method's signature, is for **organization**.
+
+Often, but not always, when we give a method the **same name as a field** we want it to **only return the value in the field** and do nothing else. Methods like this are called **getters**, and Rust **does not implement them automatically** for struct fields as some other languages do.
+
+> 💡 Where's the `->` Operator?
+> In C and C++, two different operators are used for calling methods: 
+> - use `.` if you're calling a method on the object directly 
+> - use `->` if you're calling the method on a pointer to the object and need to dereference the pointer first.
+> In other words, if `object` is a pointer, `object->something()` is similar to `(*object).something()`.
+>
+> Rust doesn't have an equivalent to the `->` operator; instead, Rust has a feature called *automatic referencing and dereferencing*. Calling methods is one of the few places in Rust that has this behavior.
+> When you call a method with `object.something()`, Rust automatically adds in `&`, `&mut`, or `*` so `object` matches the signature of the method. In other words, the following are the same:
+> ```rust
+> p1.distance(&p2);
+> (&p1).distance(&p2);
+> ```
+> This automatic referencing behavior works because methods have a clear receiver—the type of `self`. Given the receiver and name of a method, Rust can figure out definitively whether the method is reading (`&self`), mutating (`&mut self`), or consuming (`self`).
+
+### Associated Functions
+All functions defined within an `impl` block are called *associated functions* because they're associated with the type named after the `impl`.
+We can define associated functions that **don't have self as their first parameter** (and thus are not methods) because they don't need an instance of the type to work with.
+
+Associated functions that aren't methods are **often used for constructors** that will return a new instance of the struct. These are often called `new`, but `new` isn't a special name and isn't built into the language.
+For example, we could choose to provide an associated function named `square` to make it easier to create a square `Rectangle`.
+```rust
+impl Rectangle {
+    fn square(size: u32) -> Self { // Self is an alias for Rectangle
+        Self {
+            width: size,
+            height: size,
+        }
+    }
+}
+```
+To call this associated function, we use the `::` syntax with the struct name; `let sq = Rectangle::square(3)`; This function is namespaced by the struct: **the `::` syntax is used for both associated functions and namespaces created by modules.**
 
 ## Cargo
 Use `cargo build` to compile a local package and all of its dependencies.
