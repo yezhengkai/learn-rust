@@ -50,6 +50,9 @@
   - [Ch 5.3 Method Syntax](#ch-53-method-syntax)
     - [Defining Methods](#defining-methods)
     - [Associated Functions](#associated-functions)
+  - [Ch 6.1 Defining an Enum](#ch-61-defining-an-enum)
+    - [Enum Values](#enum-values)
+    - [The Option Enum and Its Advantages Over Null Values](#the-option-enum-and-its-advantages-over-null-values)
   - [Cargo](#cargo)
 
 The `main` function is special: it is always the first code that runs in every executable Rust program.
@@ -927,6 +930,131 @@ impl Rectangle {
 }
 ```
 To call this associated function, we use the `::` syntax with the struct name; `let sq = Rectangle::square(3)`; This function is namespaced by the struct: **the `::` syntax is used for both associated functions and namespaces created by modules.**
+
+## Ch 6.1 Defining an Enum
+Where *structs* give you a way of **grouping together related fields and data**, like a `Rectangle` with its `width` and `height`, *enums* give you a way of **saying a value is one of a possible set of values**.
+
+```rust
+enum IpAddrKind {
+    V4,
+    V6,
+}
+```
+`IpAddrKind` is now a custom data type.
+
+### Enum Values
+Note that the **variants of the enum are namespaced under its identifier**, and we use a double colon to separate the two. We can then, for instance, define a function that takes any `IpAddrKind`
+
+```rust
+fn route(ip_kind: IpAddrKind) {}
+let four = IpAddrKind::V4; // IpAddrKind type
+let six = IpAddrKind::V6; // IpAddrKind type
+
+route(IpAddrKind::V4);
+route(IpAddrKind::V6);
+```
+
+Rather than an enum inside a struct, we can put data directly into each enum variant. We attach data to each variant of the enum directly, so there is no need for an extra struct.
+The name of each enum variant that we define also becomes **a function that constructs an instance of the enum**
+```rust
+enum IpAddr {
+    V4(String), // tuple-like enum variant
+    V6(String),
+}
+
+let home = IpAddr::V4(String::from("127.0.0.1"));
+
+let loopback = IpAddr::V6(String::from("::1"));
+```
+
+Each variant can have different types and amounts of associated data.
+```rust
+enum IpAddr {
+    V4(u8, u8, u8, u8), // tuple-like enum variant
+    V6(String),
+}
+
+let home = IpAddr::V4(127, 0, 0, 1);
+
+let loopback = IpAddr::V6(String::from("::1"));
+```
+
+`IpAddr` defined by the standard library:
+```rust
+struct Ipv4Addr {
+    // --snip--
+}
+
+struct Ipv6Addr {
+    // --snip--
+}
+
+enum IpAddr {
+    V4(Ipv4Addr),
+    V6(Ipv6Addr),
+}
+```
+This code illustrates that you can put any kind of data inside an enum variant: strings, numeric types, or structs, for example. You can even include another enum! 
+
+
+```rust
+enum Message {
+    Quit, // unit-like enum variant
+    Move { x: i32, y: i32 }, // struct-like enum variant
+    Write(String), // tuple-like enum variant
+    ChangeColor(i32, i32, i32), // tuple-like enum variant
+}
+```
+This enum has four variants with different types:
+- `Quit` has no data associated with it at all.
+- `Move` has named fields, like a struct does.
+- `Write` includes a single `String`.
+- `ChangeColor` includes three `i32` values.
+
+The following structs could hold the same data that the preceding enum variants hold:
+```rust
+struct QuitMessage; // unit struct
+struct MoveMessage {
+    x: i32,
+    y: i32,
+}
+struct WriteMessage(String); // tuple struct
+struct ChangeColorMessage(i32, i32, i32); // tuple struct
+```
+But if we used the different structs, each of which has its own type, we couldn't as easily define a function to take any of these kinds of messages as we could with the `Message` enum, which is a single type.
+
+
+We're also able to define methods on enums. The body of the method would use `self` to get the value that we called the method on.
+`Message::Write(String::from("hello"))` is `self` in the body of the `call` method when `m.call()` is run
+```rust
+impl Message {
+    fn call(&self) {
+        // method body would be defined here
+    }
+}
+
+let m = Message::Write(String::from("hello"));
+m.call();
+```
+
+### The Option Enum and Its Advantages Over Null Values
+ℹ️ The `Option` type encodes the very common scenario in which a value could be **something** or it could be **nothing**.
+
+
+*Null* is a value that means there is no value there. In languages with null, variables can always be in one of **two states: null or not-null**.
+The problem with null values is that **if you try to use a null value as a not-null value, you'll get an error of some kind.**
+The problem isn't really with the concept but with the particular implementation. As such, **Rust does not have nulls**, but it does **have an enum that can encode the concept of a value being present or absent**. 
+This enum is `Option<T>`, and it is defined by the standard library as follows:
+```rust
+enum Option<T> {
+    None,
+    Some(T),
+}
+```
+The **`Option<T>` enum is included in the prelude**; you don't need to bring it into scope explicitly.
+Its **variants are also included in the prelude**: you can use `Some` and `None` directly without the `Option::` prefix. The `Option<T>` enum is still just a regular enum, and `Some(T)` and `None` are still variants of type `Option<T>`.
+
+> ℹ️ The <T> syntax is a generic type parameter
 
 ## Cargo
 Use `cargo build` to compile a local package and all of its dependencies.
