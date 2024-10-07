@@ -1056,6 +1056,22 @@ Its **variants are also included in the prelude**: you can use `Some` and `None`
 
 > ℹ️ The <T> syntax is a generic type parameter
 
+```rust
+let some_number = Some(5);  // Option<i32>
+let some_char = Some('e');  // Option<char>
+
+let absent_number: Option<i32> = None;  // compiler can't infer the type
+```
+
+When we have a `Some` value, we know that a value is present and the value is held within the `Some`.
+When we have a `None` value, in some sense it means the same thing as null: we don't have a valid value. 
+
+**Why is having `Option<T>` any better than having null?**
+- `Option<T>` and `T` (where `T` can be any type) are different types, the compiler won't let us use an `Option<T>` value as if it were definitely a valid value.
+- You have to convert an `Option<T>` to a `T` before you can perform `T` operations with it.
+- Everywhere that a value has a type that isn't an `Option<T>`, you *can* safely assume that the value isn't null.
+
+
 ## Cargo
 Use `cargo build` to compile a local package and all of its dependencies.
 When your project is finally ready for **release**, you can use `cargo build --release` to compile it with **optimizations**. This command will create an executable in `target/release` instead of `target/debug`.
