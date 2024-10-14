@@ -53,6 +53,12 @@
   - [Ch 6.1 Defining an Enum](#ch-61-defining-an-enum)
     - [Enum Values](#enum-values)
     - [The Option Enum and Its Advantages Over Null Values](#the-option-enum-and-its-advantages-over-null-values)
+  - [Ch 6.2 The match Control Flow Construct](#ch-62-the-match-control-flow-construct)
+    - [Patterns That Bind to Values](#patterns-that-bind-to-values)
+    - [Matching with Option](#matching-with-option)
+    - [Matches Are Exhaustive](#matches-are-exhaustive)
+    - [Catch-all Patterns and the \_ Placeholder](#catch-all-patterns-and-the-_-placeholder)
+  - [Ch 6.3 Concise Control Flow with if let](#ch-63-concise-control-flow-with-if-let)
   - [Cargo](#cargo)
 
 The `main` function is special: it is always the first code that runs in every executable Rust program.
@@ -1071,6 +1077,171 @@ When we have a `None` value, in some sense it means the same thing as null: we d
 - You have to convert an `Option<T>` to a `T` before you can perform `T` operations with it.
 - Everywhere that a value has a type that isn't an `Option<T>`, you *can* safely assume that the value isn't null.
 
+## Ch 6.2 The match Control Flow Construct
+```rust
+enum Coin {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter,
+}
+
+fn value_in_cents(coin: Coin) -> u8 {
+    match coin {
+        Coin::Penny => 1,
+        Coin::Nickel => 5,
+        Coin::Dime => 10,
+        Coin::Quarter => 25,
+    }
+}
+```
+With `if`, the condition needs to evaluate to a Boolean value, but here it can be any type. The type of `coin` in this example is the `Coin` enum.
+An *arm* has two parts: a pattern and some code. The first arm here has a pattern that is the value `Coin::Penny` and then the `=>` operator that separates the pattern and the code to run. Each arm is separated from the next with a *comma*.
+When the `match` expression executes, it **compares the resultant value against the pattern of each arm, in order.**
+The code associated with each arm is an **expression**, and the resultant value of the expression in the matching arm is the value that gets returned for the entire `match` expression.
+
+### Patterns That Bind to Values
+Another useful feature of match arms is that they can bind to the parts of the values that match the pattern. This is how we can extract values out of enum variants.
+```rust
+#[derive(Debug)] // so we can inspect the state in a minute
+enum UsState {
+    Alabama,
+    Alaska,
+    // --snip--
+}
+
+enum Coin {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter(UsState),
+}
+fn value_in_cents(coin: Coin) -> u8 {
+    match coin {
+        Coin::Penny => 1,
+        Coin::Nickel => 5,
+        Coin::Dime => 10,
+        Coin::Quarter(state) => {
+            println!("State quarter from {state:?}!");
+            25
+        }
+    }
+}
+```
+We add a variable called `state` to the pattern that matches values of the variant `Coin::Quarter`. When a `Coin::Quarter` matches, the `state` variable will bind to the value of that quarter's state. Then we can use `state` in the code for that arm.
+
+If we were to call `value_in_cents(Coin::Quarter(UsState::Alaska))`, the behavior of the program should be:
+- `coin` would be `Coin::Quarter(UsState::Alaska)`
+- match `Coin::Quarter(state)`
+- The binding for `state` will be the value `UsState::Alaska`
+
+### Matching with Option<T>
+A function that takes an `Option<i32>` and, if there's a value inside, adds 1 to that value. If there isn't a value inside, the function should return the `None` value and not attempt to perform any operations.
+```rust
+fn plus_one(x: Option<i32>) -> Option<i32> {
+    match x {
+        None => None,
+        Some(i) => Some(i + 1),
+    }
+}
+
+let five = Some(5);
+let six = plus_one(five);
+let none = plus_one(None);
+```
+
+### Matches Are Exhaustive
+**The arms' patterns must cover all possibilities.**
+Consider this version of our plus_one function, which has a bug and won't compile:
+```rust
+fn plus_one(x: Option<i32>) -> Option<i32> {
+    match x {
+        Some(i) => Some(i + 1),
+    }
+}
+```
+Rust knows that we didn't cover every possible case, and even knows which pattern we forgot! Matches in Rust are *exhaustive*: we must exhaust every last possibility in order for the code to be valid.
+
+### Catch-all Patterns and the _ Placeholder
+```rust
+let dice_roll = 9;
+match dice_roll {
+    3 => add_fancy_hat(),
+    7 => remove_fancy_hat(),
+    other => move_player(other),
+}
+
+fn add_fancy_hat() {}
+fn remove_fancy_hat() {}
+fn move_player(num_spaces: u8) {}
+```
+For the first two arms, the patterns are the literal values `3` and `7`. **For the last arm that covers every other possible value, the pattern is the variable we've chosen to name other.** The code that runs for the `other` arm uses the variable by passing it to the `move_player` function.
+
+Rust also has a pattern we can use when we want a **catch-all but don't want to use the value in the catch-all pattern**: `_` is a special pattern that matches any value and does not bind to that value. This tells Rust we aren't going to use the value, so Rust won't warn us about an unused variable.
+```rust
+let dice_roll = 9;
+match dice_roll {
+    3 => add_fancy_hat(),
+    7 => remove_fancy_hat(),
+    _ => reroll(),
+}
+
+fn add_fancy_hat() {}
+fn remove_fancy_hat() {}
+fn reroll() {}
+```
+
+We aren't going to use any other value that doesn't match a pattern in an earlier arm, and we don't want to run any code.
+```rust
+let dice_roll = 9;
+match dice_roll {
+    3 => add_fancy_hat(),
+    7 => remove_fancy_hat(),
+    _ => (),  // return unit
+}
+
+fn add_fancy_hat() {}
+fn remove_fancy_hat() {}
+```
+
+## Ch 6.3 Concise Control Flow with if let
+The `if let` syntax lets you combine `if` and `let` into a less verbose way to handle values that match one pattern while ignoring the rest.
+
+```rust
+let config_max = Some(3u8);
+match config_max {
+    Some(max) => println!("The maximum is configured to be {max}"),
+    _ => (),
+}
+```
+We could write above code in a shorter way using `if let`. 
+```rust
+let config_max = Some(3u8);
+if let Some(max) = config_max {
+    println!("The maximum is configured to be {max}");
+}
+```
+The syntax `if let` takes a ***pattern* and an *expression* separated by an equal sign**.
+
+Using `if let` means less typing, less indentation, and less boilerplate code. **However, you lose the exhaustive checking that match enforces.** Choosing between `match` and `if let` depends on what you're doing in your particular situation and whether gaining conciseness is an appropriate trade-off for losing exhaustive checking.
+
+We can include an `else` with an `if let`. The block of code that goes with the `else` is the same as the block of code that would go with the `_` case in the `match` expression that is equivalent to the `if let` and `else`.
+```rust
+let mut count = 0;
+match coin {
+    Coin::Quarter(state) => println!("State quarter from {state:?}!"),
+    _ => count += 1,
+}
+```
+Or we could use an `if let` and `else` expression, like this:
+```rust
+let mut count = 0;
+if let Coin::Quarter(state) = coin {
+    println!("State quarter from {state:?}!");
+} else {
+    count += 1;
+}
+```
 
 ## Cargo
 Use `cargo build` to compile a local package and all of its dependencies.
