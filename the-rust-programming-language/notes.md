@@ -59,6 +59,7 @@
     - [Matches Are Exhaustive](#matches-are-exhaustive)
     - [Catch-all Patterns and the \_ Placeholder](#catch-all-patterns-and-the-_-placeholder)
   - [Ch 6.3 Concise Control Flow with if let](#ch-63-concise-control-flow-with-if-let)
+  - [Ch 7.1 Packages and Crates](#ch-71-packages-and-crates)
   - [Cargo](#cargo)
 
 The `main` function is special: it is always the first code that runs in every executable Rust program.
@@ -1242,6 +1243,31 @@ if let Coin::Quarter(state) = coin {
     count += 1;
 }
 ```
+
+## Ch 7.1 Packages and Crates
+**A *crate* is the smallest amount of code that the Rust compiler considers at a time.** Even if you run `rustc` rather than `cargo` and pass a single source code file the compiler considers that file to be a crate.
+**Crates can contain modules**, and the modules may be defined in other files that get compiled with the crate.
+
+A crate can come in one of two forms:
+- **Binary crates**
+  - Binary crates are programs you can compile to an executable that you can run, such as a command-line program or a server.
+  - Each must have a function called `main` that defines what happens when the executable runs.
+- **Library crates**
+  - Library crates don't have a `main` function, and they don't compile to an executable.
+  - Library crates define functionality intended to be shared with multiple projects.
+  - Most of the time when Rustaceans say "crate”, they mean library crate, and they use "crate” interchangeably with the general programming concept of a "library".
+
+The *crate root* is a source file that the Rust compiler starts from and makes up the *root module* of your crate.
+
+A *package* is a **bundle of one or more crates** that provides a set of functionality.
+A package contains a *Cargo.toml* file that describes how to build those crates.
+**A package can contain as many binary crates as you like, but at most only one library crate.**
+A package must contain at least one crate, whether that's a library or binary crate.
+
+Cargo follows conventions:
+- *src/main.rs* is the **crate root of a binary crate** with the same name as the package.
+- *src/lib.rs* is the **crate root of a library crate** with the same name as the package.
+- A package can have multiple binary crates by placing files in the *src/bin* directory: each file will be a separate binary crate.
 
 ## Cargo
 Use `cargo build` to compile a local package and all of its dependencies.
