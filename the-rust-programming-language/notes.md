@@ -60,6 +60,8 @@
     - [Catch-all Patterns and the \_ Placeholder](#catch-all-patterns-and-the-_-placeholder)
   - [Ch 6.3 Concise Control Flow with if let](#ch-63-concise-control-flow-with-if-let)
   - [Ch 7.1 Packages and Crates](#ch-71-packages-and-crates)
+  - [Ch 7.2 Defining Modules to Control Scope and Privacy](#ch-72-defining-modules-to-control-scope-and-privacy)
+    - [Modules Cheat Sheet](#modules-cheat-sheet)
   - [Cargo](#cargo)
 
 The `main` function is special: it is always the first code that runs in every executable Rust program.
@@ -1268,6 +1270,23 @@ Cargo follows conventions:
 - *src/main.rs* is the **crate root of a binary crate** with the same name as the package.
 - *src/lib.rs* is the **crate root of a library crate** with the same name as the package.
 - A package can have multiple binary crates by placing files in the *src/bin* directory: each file will be a separate binary crate.
+
+## Ch 7.2 Defining Modules to Control Scope and Privacy
+### Modules Cheat Sheet
+- **Start from the crate root**: When compiling a crate, the compiler first looks in the crate root file (usually *src/lib.rs* for a library crate or *src/main.rs* for a binary crate) for code to compile.
+- **Declaring modules**: **In the crate root file**, you can declare new modules; say you declare a "garden" module with `mod garden;`. The compiler will look for the module's code in these places:
+  - **Inline**, within curly brackets that replace the semicolon following `mod garden`
+  - In the **file** *src/garden.rs*
+  - In the **file** *src/garden/mod.rs*
+- **Declaring submodules**: **In any file other than the crate root**, you can declare submodules. For example, you might declare `mod vegetables`; in *src/garden.rs*. The compiler will look for the submodule's code within the directory named for the parent module in these places:
+  - **Inline**, directly following `mod vegetables`, within curly brackets instead of the semicolon
+  - In the **file** *src/garden/vegetables.rs*
+  - In the **file** *src/garden/vegetables/mod.rs*
+
+
+
+
+
 
 ## Cargo
 Use `cargo build` to compile a local package and all of its dependencies.
